@@ -97,3 +97,29 @@ h1,h2,h3,h4,h5,h6{
 .hidden{
 	display: none!important;
 }
+
+.search{
+    display: flex;
+    align-items:center;
+}
+
+.search input {
+    margin-left: 350px;
+    width:30vw;
+    height: 5vh;
+    border-radius:12px 0 0 12px;
+    border: 1px solid grey;
+    box-sizing: border-box;
+}
+
+.search-btn{
+    background-color:white;
+    height: 5vh;
+    border-radius:0 12px 12px 0;
+    border: 1px solid grey;
+    padding: 10px;
+}
+
+.search-btn:hover{
+    background-color:rgb(214, 214, 214);
+}
