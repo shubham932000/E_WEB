@@ -94,5 +94,12 @@ class ShippingAddress(models.Model):
         return self.address
 
 
+class Comment(models.Model):
+    product = models.ForeignKey(Product,related_name="Comments",on_delete=models.CASCADE)
+    commenter_name = models.CharField(max_length=200)
+    comment_body = models.TextField()
+    date_added = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return '%s - %s' % (self.product.name,self.commenter_name)
 

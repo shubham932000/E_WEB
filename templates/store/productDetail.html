@@ -1,0 +1,44 @@
+{% extends 'store/main.html' %}
+{% load static %}
+{% block content %}
+<div class="row">
+    <div class="col-lg-5">
+        <a class="btn btn-outline-dark" href="{% url 'store' %}">&#x2190; Back to Store</a>
+        <hr>
+        <img class="thumbnail" src="{{product.imageURL}}">
+        <div class="box-element product">
+
+            <h3><strong>{{product.name}}</strong></h3>
+            <h6><strong>Price : &#36;{{product.price}}</strong></h6>
+            <h6><strong>Digital : {{product.digital}}</strong></h6>
+
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div style="margin:10px 10px 10px 20px">
+            Add Comments ({{num_comments}})
+            <br>
+            <hr>
+            {% if not product.Comments.all %}
+            <p>No comments added yet...</p>
+
+            {% else %}
+            {% for comment in product.Comments.all %}
+                <h3><strong>{{comment.commenter_name}}</strong></h3>
+                <p>{{comment.comment_body}}</p>
+                <p class="text-muted"><small>{{comment.date_added}}</small></p>
+                <hr>
+                {% if request.user.username == comment.commenter_name %}
+                    <p><a class="btn btn-danger" href="{% url 'delete-comment' product.id %}">Delete Comment</a></p>  
+                {% endif %}
+            {% endfor %}
+            {% endif %}
+            
+                <p><a class="btn btn-dark" href="{% url 'add-comment' product.id %}">Add Comment</a></p>
+                
+
+        </div>
+
+    </div>
+</div>
+{% endblock %}

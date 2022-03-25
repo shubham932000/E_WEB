@@ -76,8 +76,10 @@
 	      </li>
 		  <li>
 			<div class="search">
-				<input name="#" type="text" placeholder="  Search for products, brands and more">
-				<button class="search-btn"><img src="{% static 'images/search.png' %}" alt="" style="height:30px; margin-top:-15px" ></button>
+				<form action="{% url 'search' %}" method="get" class="d-flex">
+				<input name="query" type="text" placeholder="  Search for products, brands and more">
+				<button class="search-btn" type="submit"><img src="{% static 'images/search.png' %}" alt="" style="height:30px; margin-top:-15px" ></button>
+				</form>
 			</div>
 		  </li>
 	 

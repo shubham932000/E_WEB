@@ -1,5 +1,5 @@
 from unicodedata import name
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, reverse
 from django.http import JsonResponse
 import json
 import datetime
@@ -10,7 +10,8 @@ from .forms import CreateUserForm
 from django.contrib import messages
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
-
+from .forms import * 
+import datetime
 
 @login_required(login_url='login')
 def store(request):
@@ -24,6 +25,12 @@ def store(request):
 	context = {'products':products, 'cartItems':cartItems}
 	return render(request, 'store/store.html', context)
 
+@login_required(login_url='login')
+def productDetail(request,pk):
+	product = Product.objects.get(id=pk)
+	num_comments = Comment.objects.filter(product=product).count()
+	context = {'product':product, 'num_comments':num_comments}
+	return render(request,'store/productDetail.html',context)
 
 @login_required(login_url='login')
 def cart(request):
@@ -145,4 +152,45 @@ def logoutUser(request):
 	logout(request)
 	return redirect('login')
 
+@login_required(login_url='login')
+def add_comment(request,pk):
+	product = Product.objects.get(id=pk)
+	product_id = product.id
+	form = CommentForm(instance=product)
+	if request.method == 'POST':
+		form = CommentForm(request.POST,instance=product)
+		if form.is_valid():
+			name = request.user.username
+			body = form.cleaned_data['comment_body']
+			c = Comment(product=product,commenter_name=name,comment_body=body,date_added=datetime.datetime.now())
+			c.save()
+			return redirect(reverse('productDetail',args=[product_id]))
+		else:
+			print('Form is invalid')
+	else:
+		form = CommentForm()
+	
 
+	context = {
+		'form' :form
+	}
+	return render(request,'store/add_comment.html',context)
+
+@login_required(login_url='login')
+def delete_comment(request,pk):
+	comment = Comment.objects.filter(product=pk).last()
+	product_id = comment.product.id
+	comment.delete()
+	return redirect(reverse('productDetail',args=[product_id]))
+
+@login_required(login_url='login')
+def searchBar(request):
+	if request.method=='GET':
+		query = request.GET.get('query')
+		if query:
+			products = Product.objects.filter(name__icontains=query)
+			context = {'products':products,}
+			return render(request,'store/searchbar.html',context)
+		else:
+			print("No information to show")
+			return render(request,'store/searchbar.html',{}) 
